@@ -11,10 +11,10 @@ struct Card {
 impl Card {
     // constructor/destructor
     fn new() -> Card;
-    pub fn isAce() -> bool;
-    pub fn getValue() -> u8;
-    pub fn getTag() -> u8;
-    pub fn setTag();
+    pub fn isAce(&self) -> bool;
+    pub fn getValue(&self) -> u8;
+    pub fn getTag(&self) -> u8;
+    pub fn setTag(&mut self);
     // friend bool operator==
     // friend bool operator !=
     // Card operator=
@@ -22,8 +22,22 @@ impl Card {
     // friend operator <<    
 }
 
+#[derive(Clone)]
 struct Deck {
-    cDeck : &'a Vec,
+    cDeck : Vec<Card>,
     cardsLeft : u8,
+}
+
+impl Deck{
+    fn new() -> Deck;
+    fn shuffle_deck(&mut self);
+    fn fill_red(&mut self);
+    fn fill_black(&mut self);
+    fn get_card(&self) -> Card; // gpt suggests mut self
+    fn deck_size(&self) -> u8;
+    fn count_deck(&self) -> u8;
+    fn push_front(&mut self, card: Card);
+    fn card_swap(&mut self);
+    fn clear_deck(&mut self);
 }
 
