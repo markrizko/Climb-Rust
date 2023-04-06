@@ -3,7 +3,7 @@ use std::fmt;
 static mut counter : i32 = 0;
 
 #[derive(Clone, Copy)]
-struct Card {
+pub struct Card {
     value : u8,
     cardTag : u8,
 }
