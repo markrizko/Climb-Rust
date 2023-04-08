@@ -23,7 +23,7 @@ impl Card {
 }
 
 #[derive(Clone)]
-struct Deck {
+pub struct Deck {
     cDeck : Vec<Card>,
     cardsLeft : u8,
 }

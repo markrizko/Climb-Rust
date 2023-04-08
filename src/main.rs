@@ -1,4 +1,4 @@
-use climb_rust::card::Card;
+use game::Game;
 
 fn main() {
     println!("Hello, world!");

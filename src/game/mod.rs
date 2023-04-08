@@ -1,6 +1,6 @@
-use crate::lib::card;
+use crate::card::*;
 
-struct Game {
+pub struct Game {
     adStats : bool,
     gameOver : bool,
     winner : bool,
@@ -23,6 +23,6 @@ struct Game {
     pub pa : bool,
 }
 
-impl Game {
+// impl Game {
     
-}
+// }
