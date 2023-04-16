@@ -39,7 +39,7 @@ pub struct Game {
     na: u8,
     score: u8,
     valid_move: bool,
-    init: bool,
+    // init: bool,
     f_enc: bool,
     pub pa: bool,
 }
@@ -232,6 +232,37 @@ impl Game {
         return CompareResult::Invalid;
     }
 
+    pub fn welcome_screen(&mut self){
+        let mut p = false;
+        let mut input = String::new();
+        println!("Welcome to Climb! A card game created by Mark Rizko.\n
+                Officially rewritten in Rust!\nPress 1 for the rules\t
+                Press 2 to toggle advanced stats (unimplemented)\tPress 3 to play!\n");
+        
+        while !p {
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+
+            match input.trim() {
+                "1" => self.display_rules(),
+                "2" => {
+                    self.ad_stats = !self.ad_stats;
+                    if self.ad_stats {
+                        println!("Advanced stats on\n");
+                    }
+                    else {
+                        println!("Advanced stats off\n");
+                    }
+                }
+                "3" => {
+                    p = true;
+                }
+                _ => println!("Invalid input! Try again\n")
+            }
+        }
+    }
+
     pub fn display_cards(&self){
         if !self.f_enc {
             println!("\t\tK\t\t\tBlack Cards Left: {}\n", self.black_count + 1);
@@ -249,7 +280,7 @@ impl Game {
         }
     }
 
-    pub fn display_rules(){
+    pub fn display_rules(&self){
         let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
         let file_path = Path::new(&manifest_dir).join("rules.txt");
         let contents = fs::read_to_string(file_path)
@@ -339,15 +370,15 @@ impl Game {
             red_num_ip: 0,
             black_num_ip: 0,
             valid_move: false,
-            init: true,
+            // init: true,
             game_over: false,
             f_enc: false,
             black_count: (black_count + 32),
             red_count,
-            selected_black: Vec::new(),
-            selected_red: Vec::new(),
-            red_in_play: Vec::new(),
-            black_in_play: Vec::new(),
+            selected_black: vec![0; 3],
+            selected_red: vec![0; 3],
+            red_in_play: vec![None; 3],
+            black_in_play: vec![None; 3],
             winner: false,
             na: 0,
         };
@@ -530,12 +561,12 @@ impl Game {
 
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::card;
+// #[cfg(test)]
+// mod tests {
+//     use crate::card;
 
-    use super::*;
+//     use super::*;
 
-    #[test]
-    fn test_totals() {}
-}
+//     #[test]
+//     fn test_totals() {}
+// }

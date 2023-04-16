@@ -57,7 +57,7 @@ impl Display for Card {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.card_tag {
             1 => write!(f, "A"),
-            x if x >= 2 && x <= 10 => write!(f, "{:?}", Some(self.card_tag)),
+            x if x >= 2 && x <= 10 => write!(f, "{:?}", self.card_tag),
             11 => write!(f, "J"),
             12 => write!(f, "Q"),
             13 => write!(f, "K"),
