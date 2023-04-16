@@ -1,12 +1,12 @@
 use rand::{seq::SliceRandom, thread_rng};
 use std::fmt::Display;
 
-static mut counter: i32 = 0;
+// static mut counter: i32 = 0;
 
 #[derive(Clone, Copy)]
 pub struct Card {
     value: u8,
-    cardTag: u8,
+    card_tag: u8,
 }
 
 impl Card {
@@ -14,7 +14,7 @@ impl Card {
     // // TODO investigate whether i need option type
     pub fn new_empty() -> Self {
         Self {
-            cardTag: 0,
+            card_tag: 0,
             value: 0,
         }
     }
@@ -27,26 +27,26 @@ impl Card {
         };
 
         Self {
-            cardTag: tag,
+            card_tag: tag,
             value,
         }
     }
-    pub fn isAce(&self) -> bool {
+    pub fn is_ace(&self) -> bool {
         match self.value {
             11 => true,
             _ => false,
         };
         false
     }
-    pub fn getValue(&self) -> u8 {
+    pub fn get_value(&self) -> u8 {
         self.value
     }
-    pub fn getTag(&self) -> u8 {
-        self.cardTag
+    pub fn get_tag(&self) -> u8 {
+        self.card_tag
     }
-    pub fn setTag(&mut self, tag: u8) {
-        self.cardTag = tag;
-    }
+    // pub fn set_tag(&mut self, tag: u8) {
+    //     self.card_tag = tag;
+    // }
     // friend bool operator==
     // friend bool operator !=
     // Card operator=
@@ -55,9 +55,9 @@ impl Card {
 
 impl Display for Card {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.cardTag {
+        match self.card_tag {
             1 => write!(f, "A"),
-            x if x >= 2 && x <= 10 => write!(f, "{:?}", Some(self.cardTag)),
+            x if x >= 2 && x <= 10 => write!(f, "{:?}", Some(self.card_tag)),
             11 => write!(f, "J"),
             12 => write!(f, "Q"),
             13 => write!(f, "K"),
@@ -68,71 +68,71 @@ impl Display for Card {
 
 #[derive(Clone)]
 pub struct Deck {
-    cDeck: Vec<Card>,
-    cardsLeft: u8,
+    c_deck: Vec<Card>,
+    cards_left: u8,
 }
 
 impl Deck {
     pub fn new() -> Self {
         Self {
-            cardsLeft: 0,
-            cDeck: Vec::new(),
+            cards_left: 0,
+            c_deck: Vec::new(),
         }
     }
     pub fn shuffle_deck(&mut self) {
-        self.cDeck.shuffle(&mut thread_rng());
+        self.c_deck.shuffle(&mut thread_rng());
     }
     pub fn fill_red(&mut self) {
         for i in 1..14 {
             let in_card = Card::new_full(i);
-            self.cDeck.push(in_card);
-            self.cDeck.push(in_card);
+            self.c_deck.push(in_card);
+            self.c_deck.push(in_card);
         }
-        self.cardsLeft = 26;
+        self.cards_left = 26;
         self.shuffle_deck();
     }
     pub fn fill_black(&mut self) {
         for i in 1..14 {
             let in_card = Card::new_full(i);
-            self.cDeck.push(in_card);
+            self.c_deck.push(in_card);
             if i != 13 {
-                self.cDeck.push(in_card);
+                self.c_deck.push(in_card);
             }
         }
-        self.cardsLeft = 25;
+        self.cards_left = 25;
         self.shuffle_deck();
     }
     // TODO fix
     pub fn get_card(&mut self) -> Option<Card> {
-        if self.cardsLeft == 0 {
+        if self.cards_left == 0 {
             println!("No cards left\n");
             return None;
         }
-        let card = self.cDeck[0];
-        let length = self.cDeck.len();
-        self.cDeck.swap(0, length - 1);
-        self.cDeck.pop();
-        self.cardsLeft -= 1;
+        let card = self.c_deck[0];
+        let length = self.c_deck.len();
+        self.c_deck.swap(0, length - 1);
+        self.c_deck.pop();
+        self.cards_left -= 1;
         return Some(card);
     }
     pub fn deck_size(&self) -> u8 {
-        self.cardsLeft
+        self.cards_left
     }
     pub fn count_deck(&self) -> u8 {
         let mut count: u8 = 0;
-        for card in &self.cDeck {
-            if card.getTag() != 1 {
-                count += card.getValue();
+        for card in &self.c_deck {
+            if card.get_tag() != 1 {
+                count += card.get_value();
             }
         }
         count
     }
     pub fn push_front(&mut self, card: Card) {
-        self.cDeck.insert(0, card)
+        self.c_deck.insert(0, card)
     }
     // fn card_swap(&mut self);
     pub fn clear_deck(&mut self) {
-        self.cardsLeft = 0;
-        self.cDeck.clear();
+        self.cards_left = 0;
+        self.c_deck.clear();
     }
 }
