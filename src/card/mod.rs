@@ -5,46 +5,46 @@ static mut counter: i32 = 0;
 
 #[derive(Clone, Copy)]
 pub struct Card {
-    value: Option<u8>,
-    cardTag: Option<u8>,
+    value: u8,
+    cardTag: u8,
 }
 
 impl Card {
     // constructor/destructor
-    // TODO investigate whether i need option type
-    fn new_empty() -> Self {
+    // // TODO investigate whether i need option type
+    pub fn new_empty() -> Self {
         Self {
-            cardTag: None,
-            value: None,
+            cardTag: 0,
+            value: 0,
         }
     }
-    fn new_full(tag: u8) -> Self {
+    pub fn new_full(tag: u8) -> Self {
         let value = match tag {
-            2..=10 => Some(tag),
-            1 => Some(11),
-            11..=13 => Some(10),
-            _ => None,
+            2..=10 => tag,
+            1 => 11,
+            11..=13 => 10,
+            _ => 0,
         };
 
         Self {
-            cardTag: Some(tag),
+            cardTag: tag,
             value,
         }
     }
     pub fn isAce(&self) -> bool {
         match self.value {
-            Some(11) => true,
+            11 => true,
             _ => false,
         };
         false
     }
-    pub fn getValue(&self) -> Option<u8> {
+    pub fn getValue(&self) -> u8 {
         self.value
     }
-    pub fn getTag(&self) -> Option<u8> {
+    pub fn getTag(&self) -> u8 {
         self.cardTag
     }
-    pub fn setTag(&mut self, tag: Option<u8>) {
+    pub fn setTag(&mut self, tag: u8) {
         self.cardTag = tag;
     }
     // friend bool operator==
@@ -56,11 +56,11 @@ impl Card {
 impl Display for Card {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.cardTag {
-            Some(1) => write!(f, "A"),
-            Some(x) if x >= 2 && x <= 10 => write!(f, "{:?}", Some(self.cardTag)),
-            Some(11) => write!(f, "J"),
-            Some(12) => write!(f, "Q"),
-            Some(13) => write!(f, "K"),
+            1 => write!(f, "A"),
+            x if x >= 2 && x <= 10 => write!(f, "{:?}", Some(self.cardTag)),
+            11 => write!(f, "J"),
+            12 => write!(f, "Q"),
+            13 => write!(f, "K"),
             _ => write!(f, "X"),
         }
     }
@@ -121,8 +121,8 @@ impl Deck {
     pub fn count_deck(&self) -> u8 {
         let mut count: u8 = 0;
         for card in &self.cDeck {
-            if card.getTag() != Some(1) {
-                count += card.getValue().unwrap_or_default();
+            if card.getTag() != 1 {
+                count += card.getValue();
             }
         }
         count
