@@ -1,10 +1,10 @@
 use crate::card::{self, *};
-use std::io;
 use std::env;
+use std::io;
 use std::path::Path;
 
 #[derive(PartialEq)]
-enum TieType {
+pub enum TieType {
     Tie,
     Win,
     Lose,
@@ -12,7 +12,7 @@ enum TieType {
 }
 
 #[derive(PartialEq)]
-enum CompareResult {
+pub enum CompareResult {
     AceWipe,
     KingTie,
     Invalid,
@@ -114,7 +114,7 @@ impl Game {
         self.play_again();
     }
 
-    pub fn play_again(&mut self){
+    pub fn play_again(&mut self) {
         let mut input = String::new();
         let mut flag = false;
         while !flag {
@@ -131,24 +131,24 @@ impl Game {
                     self.pa = false;
                     flag = true;
                 }
-                _ => println!("Invalid input, please try again..")
+                _ => println!("Invalid input, please try again.."),
             }
         }
     }
 
-    pub fn display_rules(){
+    pub fn display_rules() {
         let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
         let file_path = Path::new(&manifest_dir).join("rules.txt");
     }
 
-    pub fn final_encounter(&mut self) -> bool{
+    pub fn final_encounter(&mut self) -> bool {
         self.fEnc = true;
         let king = Card::new_full(13);
         println!("\n\n\t\tTime to face the King!\t\t\n\n");
         self.blackInPlay[1] = Some(king);
         self.draw();
         self.display_cards();
-        
+
         if self.blackWin() {
             return false;
         }
@@ -178,12 +178,10 @@ impl Game {
                 println!("You win!\n");
                 self.calculateScore();
                 println!("\nScore: {}\n", self.score);
-            }
-            else {
+            } else {
                 println!("You lose!\n");
             }
-        }
-        else {
+        } else {
             println!("You lose!\n");
         }
     }
@@ -201,7 +199,7 @@ impl Game {
 
     // TODO FIX EXPECT LOGIC
     // TODO FINISH THIS FUNCTION after compare
-    pub fn Tie(&mut self) -> TieType {
+    pub fn tie(&mut self) -> TieType {
         if self.blackDeck.deck_size() == 0 {
             return TieType::Win;
         }
@@ -317,19 +315,33 @@ impl Game {
         }
     }
 
-    pub fn display_cards(&self){
+    pub fn display_cards(&self) {
         if !self.fEnc {
             println!("\t\tK\t\t\tBlack Cards Left: {}\n", self.blackCount + 1);
             println!("Black: \n");
-            println!("\t{}\t{}\t{}\n", self.blackInPlay[0].unwrap_or(Card::new_empty()), self.blackInPlay[1].unwrap_or(Card::new_empty()), self.blackInPlay[2].unwrap_or(Card::new_empty()));
+            println!(
+                "\t{}\t{}\t{}\n",
+                self.blackInPlay[0].unwrap_or(Card::new_empty()),
+                self.blackInPlay[1].unwrap_or(Card::new_empty()),
+                self.blackInPlay[2].unwrap_or(Card::new_empty())
+            );
             println!("Red: \n");
-            println!("\t{}\t{}\t{}\n", self.redInPlay[0].unwrap_or(Card::new_empty()), self.redInPlay[1].unwrap_or(Card::new_empty()), self.redInPlay[2].unwrap_or(Card::new_empty()));
+            println!(
+                "\t{}\t{}\t{}\n",
+                self.redInPlay[0].unwrap_or(Card::new_empty()),
+                self.redInPlay[1].unwrap_or(Card::new_empty()),
+                self.redInPlay[2].unwrap_or(Card::new_empty())
+            );
             println!("\nRed Cards Left: {}\n", self.redCount)
-        }
-        else {
+        } else {
             println!("\t\tK\n\n");
             println!("Red: \n");
-            println!("\t{}\t{}\t{}\n", self.redInPlay[0].unwrap_or(Card::new_empty()), self.redInPlay[1].unwrap_or(Card::new_empty()), self.redInPlay[2].unwrap_or(Card::new_empty()));
+            println!(
+                "\t{}\t{}\t{}\n",
+                self.redInPlay[0].unwrap_or(Card::new_empty()),
+                self.redInPlay[1].unwrap_or(Card::new_empty()),
+                self.redInPlay[2].unwrap_or(Card::new_empty())
+            );
             println!("\nRed Cards Left: {}\n", self.redCount);
         }
     }
@@ -340,7 +352,7 @@ impl Game {
         let mut tres = TieType::Tie;
         match res {
             CompareResult::Tie => loop {
-                tres = self.Tie();
+                tres = self.tie();
                 if tres != TieType::Tie {
                     if tres == TieType::AceWipe {
                         self.ace_wipe();
@@ -382,25 +394,24 @@ impl Game {
     }
 
     pub fn checkWin(&mut self) {
-        if self.blackInPlay[0].is_none() && 
-            self.blackInPlay[1].is_none() &&
-            self.blackInPlay[2].is_none() &&
-            self.blackDeck.deck_size() == 0{
-                self.winner = true;
-                self.gameOver = true;
-                return;
-        }
-        else if self.blackWin(){
+        if self.blackInPlay[0].is_none()
+            && self.blackInPlay[1].is_none()
+            && self.blackInPlay[2].is_none()
+            && self.blackDeck.deck_size() == 0
+        {
+            self.winner = true;
+            self.gameOver = true;
+            return;
+        } else if self.blackWin() {
             self.winner = false;
             self.gameOver = true;
             return;
-        }
-        else {
+        } else {
             return;
         }
     }
 
-    pub fn blackWin(&self) -> bool{
+    pub fn blackWin(&self) -> bool {
         if self.redDeck.deck_size() > 0 {
             return false;
         }
@@ -411,7 +422,7 @@ impl Game {
         let mut aceflag = false;
 
         for i in 0..3 {
-            if self.redInPlay[i].unwrap().isAce(){
+            if self.redInPlay[i].unwrap().isAce() {
                 aceflag = true;
                 break;
             }
@@ -422,18 +433,14 @@ impl Game {
         }
         if aceflag {
             return false;
-        }
-        else if bsum > rsum {
+        } else if bsum > rsum {
             return true;
-        }
-        else if rsum > bsum {
+        } else if rsum > bsum {
             return false;
-        }
-        else {
+        } else {
             if btag > rtag {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -523,7 +530,6 @@ impl Game {
 
         return CompareResult::Invalid;
     }
-
 }
 
 #[cfg(test)]
