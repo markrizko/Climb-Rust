@@ -1,7 +1,7 @@
 use crate::card::*;
+use std::env;
 use std::fs;
 use std::io;
-use std::env;
 use std::path::Path;
 
 #[derive(PartialEq)]
@@ -102,7 +102,7 @@ impl Game {
         sum
     }
 
-    pub fn black_win(&self) -> bool{
+    pub fn black_win(&self) -> bool {
         if self.red_deck.deck_size() > 0 {
             return false;
         }
@@ -113,7 +113,7 @@ impl Game {
         let mut aceflag = false;
 
         for i in 0..3 {
-            if self.red_in_play[i].unwrap().is_ace(){
+            if self.red_in_play[i].unwrap().is_ace() {
                 aceflag = true;
                 break;
             }
@@ -124,18 +124,14 @@ impl Game {
         }
         if aceflag {
             return false;
-        }
-        else if bsum > rsum {
+        } else if bsum > rsum {
             return true;
-        }
-        else if rsum > bsum {
+        } else if rsum > bsum {
             return false;
-        }
-        else {
+        } else {
             if btag > rtag {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -153,20 +149,19 @@ impl Game {
     }
 
     pub fn check_win(&mut self) {
-        if self.black_in_play[0].is_none() && 
-            self.black_in_play[1].is_none() &&
-            self.black_in_play[2].is_none() &&
-            self.black_deck.deck_size() == 0{
-                self.winner = true;
-                self.game_over = true;
-                return;
-        }
-        else if self.black_win(){
+        if self.black_in_play[0].is_none()
+            && self.black_in_play[1].is_none()
+            && self.black_in_play[2].is_none()
+            && self.black_deck.deck_size() == 0
+        {
+            self.winner = true;
+            self.game_over = true;
+            return;
+        } else if self.black_win() {
             self.winner = false;
             self.game_over = true;
             return;
-        }
-        else {
+        } else {
             return;
         }
     }
@@ -176,7 +171,8 @@ impl Game {
             println!("ACE WIPE\n");
             return CompareResult::AceWipe;
         }
-        if self.red_in_play[0].unwrap().get_tag() == 13 && self.black_in_play[0].unwrap().get_tag() == 13
+        if self.red_in_play[0].unwrap().get_tag() == 13
+            && self.black_in_play[0].unwrap().get_tag() == 13
         {
             return CompareResult::KingTie;
         }
@@ -232,13 +228,15 @@ impl Game {
         return CompareResult::Invalid;
     }
 
-    pub fn welcome_screen(&mut self){
+    pub fn welcome_screen(&mut self) {
         let mut p = false;
         let mut input = String::new();
-        println!("Welcome to Climb! A card game created by Mark Rizko.\n
+        println!(
+            "Welcome to Climb! A card game created by Mark Rizko.\n
                 Officially rewritten in Rust!\nPress 1 for the rules\t
-                Press 2 to toggle advanced stats (unimplemented)\tPress 3 to play!\n");
-        
+                Press 2 to toggle advanced stats (unimplemented)\tPress 3 to play!\n"
+        );
+
         while !p {
             io::stdin()
                 .read_line(&mut input)
@@ -250,41 +248,56 @@ impl Game {
                     self.ad_stats = !self.ad_stats;
                     if self.ad_stats {
                         println!("Advanced stats on\n");
-                    }
-                    else {
+                    } else {
                         println!("Advanced stats off\n");
                     }
                 }
                 "3" => {
                     p = true;
                 }
-                _ => println!("Invalid input! Try again\n")
+                _ => println!("Invalid input! Try again\n"),
             }
         }
     }
 
-    pub fn display_cards(&self){
+    pub fn display_cards(&self) {
         if !self.f_enc {
-            println!("\t\tK\t\t\tBlack Cards Left: {}\n", self.black_count + 1);
+            println!(
+                "\t\tK\t\t\tBlack Cards Left: {}\n",
+                self.black_deck.deck_size() + 1
+            );
             println!("Black: \n");
-            println!("\t{}\t{}\t{}\n", self.black_in_play[0].unwrap_or(Card::new_empty()), self.black_in_play[1].unwrap_or(Card::new_empty()), self.black_in_play[2].unwrap_or(Card::new_empty()));
+            println!(
+                "\t{}\t{}\t{}\n",
+                self.black_in_play[0].unwrap_or(Card::new_empty()),
+                self.black_in_play[1].unwrap_or(Card::new_empty()),
+                self.black_in_play[2].unwrap_or(Card::new_empty())
+            );
             println!("Red: \n");
-            println!("\t{}\t{}\t{}\n", self.red_in_play[0].unwrap_or(Card::new_empty()), self.red_in_play[1].unwrap_or(Card::new_empty()), self.red_in_play[2].unwrap_or(Card::new_empty()));
-            println!("\nRed Cards Left: {}\n", self.red_count)
-        }
-        else {
+            println!(
+                "\t{}\t{}\t{}\n",
+                self.red_in_play[0].unwrap_or(Card::new_empty()),
+                self.red_in_play[1].unwrap_or(Card::new_empty()),
+                self.red_in_play[2].unwrap_or(Card::new_empty())
+            );
+            println!("\nRed Cards Left: {}\n", self.red_deck.deck_size())
+        } else {
             println!("\t\tK\n\n");
             println!("Red: \n");
-            println!("\t{}\t{}\t{}\n", self.red_in_play[0].unwrap_or(Card::new_empty()), self.red_in_play[1].unwrap_or(Card::new_empty()), self.red_in_play[2].unwrap_or(Card::new_empty()));
-            println!("\nRed Cards Left: {}\n", self.red_count);
+            println!(
+                "\t{}\t{}\t{}\n",
+                self.red_in_play[0].unwrap_or(Card::new_empty()),
+                self.red_in_play[1].unwrap_or(Card::new_empty()),
+                self.red_in_play[2].unwrap_or(Card::new_empty())
+            );
+            println!("\nRed Cards Left: {}\n", self.red_deck.deck_size());
         }
     }
 
-    pub fn display_rules(&self){
+    pub fn display_rules(&self) {
         let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
         let file_path = Path::new(&manifest_dir).join("rules.txt");
-        let contents = fs::read_to_string(file_path)
-            .expect("Cannot read rules.txt");
+        let contents = fs::read_to_string(file_path).expect("Cannot read rules.txt");
         println!("{contents}");
     }
 
@@ -312,24 +325,22 @@ impl Game {
                 println!("You win!\n");
                 self.calculate_score();
                 println!("\nScore: {}\n", self.score);
-            }
-            else {
+            } else {
                 println!("You lose!\n");
             }
-        }
-        else {
+        } else {
             println!("You lose!\n");
         }
     }
 
-    pub fn final_encounter(&mut self) -> bool{
+    pub fn final_encounter(&mut self) -> bool {
         self.f_enc = true;
         let king = Card::new_full(13);
         println!("\n\n\t\tTime to face the King!\t\t\n\n");
         self.black_in_play[1] = Some(king);
         self.draw();
         self.display_cards();
-        
+
         if self.black_win() {
             return false;
         }
@@ -386,7 +397,7 @@ impl Game {
         game
     }
 
-    pub fn play_again(&mut self){
+    pub fn play_again(&mut self) {
         let mut input = String::new();
         let mut flag = false;
         while !flag {
@@ -403,7 +414,7 @@ impl Game {
                     self.pa = false;
                     flag = true;
                 }
-                _ => println!("Invalid input, please try again..")
+                _ => println!("Invalid input, please try again.."),
             }
         }
     }
@@ -442,70 +453,56 @@ impl Game {
 
     pub fn select(&mut self) {
         let mut input = String::new();
-        let mut flag = true;
         println!("\nSelect Red: ");
-        while flag {
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+
+        input.chars().for_each(|c| match c {
+            '1' => {
+                self.selected_red.push(0);
+                self.red_num_ip += 1;
+            }
+            '2' => {
+                self.selected_red.push(1);
+                self.red_num_ip += 1;
+            }
+            '3' => {
+                self.selected_red.push(2);
+                self.red_num_ip += 1;
+            }
+            'x' => {
+                self.black_deck.clear_deck();
+            }
+            _ => {}
+        });
+
+        input.clear();
+        // flag = true;
+        if !self.f_enc {
+            println!("Select Black: ");
             io::stdin()
                 .read_line(&mut input)
                 .expect("Failed to read line");
 
-            match input.trim() {
-                "1" => {
-                    self.selected_red.push(0);
-                    self.red_num_ip += 1;
+            input.chars().for_each(|c| match c {
+                '1' => {
+                    self.selected_black.push(0);
+                    self.black_num_ip += 1;
                 }
-                "2" => {
-                    self.selected_red.push(1);
-                    self.red_num_ip += 1;
+                '2' => {
+                    self.selected_black.push(1);
+                    self.black_num_ip += 1;
                 }
-                "3" => {
-                    self.selected_red.push(2);
-                    self.red_num_ip += 1;
+                '3' => {
+                    self.selected_black.push(2);
+                    self.black_num_ip += 1;
                 }
-                "." => {
-                    flag = false;
+                'x' => {
+                    self.red_deck.clear_deck();
                 }
-                "x" => {
-                    self.black_deck.clear_deck();
-                }
-                _ => {
-                    println!("Invalid input")
-                }
-            }
-            input.clear();
-        }
-        flag = true;
-        if !self.f_enc {
-            println!("Select Black: ");
-            while flag {
-                io::stdin()
-                    .read_line(&mut input)
-                    .expect("Failed to read line");
-
-                match input.trim() {
-                    "1" => {
-                        self.selected_black.push(0);
-                        self.black_num_ip += 1;
-                    }
-                    "2" => {
-                        self.selected_black.push(1);
-                        self.black_num_ip += 1;
-                    }
-                    "3" => {
-                        self.selected_black.push(2);
-                        self.black_num_ip += 1;
-                    }
-                    "." => {
-                        flag = false;
-                    }
-                    "x" => {
-                        self.red_deck.clear_deck();
-                    }
-                    _ => {
-                        println!("Invalid input");
-                    }
-                }
-            }
+                _ => {}
+            })
         } else {
             self.selected_black.push(1);
             self.black_num_ip += 1;
@@ -558,7 +555,6 @@ impl Game {
         self.selected_black.clear();
         self.check_win();
     }
-
 }
 
 // #[cfg(test)]
