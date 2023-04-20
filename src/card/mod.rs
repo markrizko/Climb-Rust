@@ -32,10 +32,9 @@ impl Card {
         }
     }
     pub fn is_ace(&self) -> bool {
-        match self.value {
-            11 => true,
-            _ => false,
-        };
+        if self.card_tag == 1 {
+            return true
+        }
         false
     }
     pub fn get_value(&self) -> u8 {

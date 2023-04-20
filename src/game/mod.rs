@@ -167,12 +167,12 @@ impl Game {
     }
 
     pub fn compare(&mut self) -> CompareResult {
-        if self.red_in_play[0].unwrap().is_ace() {
+        if self.red_in_play[self.selected_red[0] as usize].unwrap().is_ace() {
             println!("ACE WIPE\n");
             return CompareResult::AceWipe;
         }
-        if self.red_in_play[0].unwrap().get_tag() == 13
-            && self.black_in_play[0].unwrap().get_tag() == 13
+        if self.red_in_play[self.selected_red[0] as usize].unwrap().get_tag() == 13
+            && self.black_in_play[self.selected_red[0] as usize].unwrap().get_tag() == 13
         {
             return CompareResult::KingTie;
         }
@@ -386,8 +386,8 @@ impl Game {
             f_enc: false,
             black_count: (black_count + 32),
             red_count,
-            selected_black: vec![0; 3],
-            selected_red: vec![0; 3],
+            selected_black: Vec::new(),
+            selected_red: Vec::new(),
             red_in_play: vec![None; 3],
             black_in_play: vec![None; 3],
             winner: false,
@@ -540,14 +540,14 @@ impl Game {
                         self.red_count -= _card.unwrap().get_value();
                     }
                 }
-                _card = &None;
+                self.red_in_play[*i as usize] = None;
             }
         }
 
         for i in &self.selected_black {
             if let Some(mut _card) = self.black_in_play.get(*i as usize) {
                 self.black_count -= _card.unwrap().get_value();
-                _card = &None;
+                self.black_in_play[*i as usize] = None;
             }
         }
 
