@@ -56,7 +56,7 @@ impl Display for Card {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.card_tag {
             1 => write!(f, "A"),
-            x if x >= 2 && x <= 10 => write!(f, "{:?}", self.card_tag),
+            x if (2..=10).contains(&x) => write!(f, "{:?}", self.card_tag),
             11 => write!(f, "J"),
             12 => write!(f, "Q"),
             13 => write!(f, "K"),
@@ -112,7 +112,7 @@ impl Deck {
         self.c_deck.swap(0, length - 1);
         self.c_deck.pop();
         self.cards_left -= 1;
-        return Some(card);
+        Some(card)
     }
     pub fn deck_size(&self) -> u8 {
         self.cards_left

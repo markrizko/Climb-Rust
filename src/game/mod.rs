@@ -44,8 +44,13 @@ pub struct Game {
     pub pa: bool,
 }
 
+impl Default for Game {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Game {
-    // TODO FIX EXPECT LOGIC
     pub fn tie(&mut self) -> TieType {
         if self.black_deck.deck_size() == 0 {
             return TieType::Win;
@@ -66,7 +71,7 @@ impl Game {
         }
         if red.get_value() == black.get_value() {
             if red.get_tag() > black.get_tag() {
-                return TieType::Win;
+                TieType::Win
             } else if red.get_tag() < black.get_tag() {
                 self.black_deck.push_front(black);
                 return TieType::Lose;
@@ -122,17 +127,13 @@ impl Game {
             rtag += self.red_in_play[i].unwrap().get_tag();
         }
         if aceflag {
-            return false;
+            false
         } else if bsum > rsum {
             return true;
         } else if rsum > bsum {
             return false;
         } else {
-            if btag > rtag {
-                return true;
-            } else {
-                return false;
-            }
+            return btag > rtag;
         }
     }
 
@@ -155,7 +156,6 @@ impl Game {
         {
             self.winner = true;
             self.game_over = true;
-            return;
         } else if self.black_win() {
             self.winner = false;
             self.game_over = true;
@@ -166,12 +166,21 @@ impl Game {
     }
 
     pub fn compare(&mut self) -> CompareResult {
-        if self.red_in_play[self.selected_red[0] as usize].unwrap().is_ace() {
+        if self.red_in_play[self.selected_red[0] as usize]
+            .unwrap()
+            .is_ace()
+        {
             println!("ACE WIPE\n");
             return CompareResult::AceWipe;
         }
-        if self.red_in_play[self.selected_red[0] as usize].unwrap().get_tag() == 13
-            && self.black_in_play[self.selected_red[0] as usize].unwrap().get_tag() == 13
+        if self.red_in_play[self.selected_red[0] as usize]
+            .unwrap()
+            .get_tag()
+            == 13
+            && self.black_in_play[self.selected_red[0] as usize]
+                .unwrap()
+                .get_tag()
+                == 13
         {
             return CompareResult::KingTie;
         }
@@ -224,7 +233,7 @@ impl Game {
             return CompareResult::Invalid;
         }
 
-        return CompareResult::Invalid;
+        CompareResult::Invalid
     }
 
     pub fn welcome_screen(&mut self) {
@@ -357,9 +366,9 @@ impl Game {
                         _card = &None;
                     }
                 }
-                return true;
+                true
             }
-            _ => return false,
+            _ => false,
         }
     }
 
@@ -431,18 +440,17 @@ impl Game {
     }
 
     pub fn display_ad_stats(&mut self) {
-        self.ca = self.red_deck.deck_size() - self.black_deck.deck_size() -1;
+        self.ca = self.red_deck.deck_size() - self.black_deck.deck_size() - 1;
 
-        self.ca += self.red_in_play.iter()
-            .filter(|c| c.is_some())
-            .count() as u8;
-        self.ca -= self.black_in_play.iter()
-            .filter(|c| c.is_some())
-            .count() as u8;
+        self.ca += self.red_in_play.iter().filter(|c| c.is_some()).count() as u8;
+        self.ca -= self.black_in_play.iter().filter(|c| c.is_some()).count() as u8;
 
         self.na = self.red_count - self.black_count;
 
-        println!("Card Advantage: {}\tNumber Advantage: {}\n", self.ca, self.na);
+        println!(
+            "Card Advantage: {}\tNumber Advantage: {}\n",
+            self.ca, self.na
+        );
     }
 
     // TODO adstats
