@@ -46,7 +46,6 @@ pub struct Game {
 
 impl Game {
     // TODO FIX EXPECT LOGIC
-    // TODO FINISH THIS FUNCTION after compare
     pub fn tie(&mut self) -> TieType {
         if self.black_deck.deck_size() == 0 {
             return TieType::Win;
@@ -431,14 +430,29 @@ impl Game {
         sum
     }
 
+    pub fn display_ad_stats(&mut self) {
+        self.ca = self.red_deck.deck_size() - self.black_deck.deck_size() -1;
+
+        self.ca += self.red_in_play.iter()
+            .filter(|c| c.is_some())
+            .count() as u8;
+        self.ca -= self.black_in_play.iter()
+            .filter(|c| c.is_some())
+            .count() as u8;
+
+        self.na = self.red_count - self.black_count;
+
+        println!("Card Advantage: {}\tNumber Advantage: {}\n", self.ca, self.na);
+    }
+
     // TODO adstats
     pub fn run_game(&mut self) {
         loop {
             self.valid_move = false;
             while !self.valid_move && !self.game_over {
-                // if self.adStats {
-                //     // self.display_ad_stats
-                // }
+                if self.ad_stats {
+                    self.display_ad_stats()
+                }
                 self.display_cards();
                 self.turn();
                 self.draw();
