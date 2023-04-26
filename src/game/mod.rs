@@ -263,8 +263,9 @@ impl Game {
                 "3" => {
                     p = true;
                 }
-                _ => println!("Invalid input! Try again\n"),
+                _ => println!("Invalid input! Try again"),
             }
+            input.clear();
         }
     }
 
