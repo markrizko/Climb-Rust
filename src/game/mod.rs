@@ -33,10 +33,10 @@ pub struct Game {
     red_num_ip: u8,
     black_in_play: Vec<Option<Card>>,
     black_num_ip: u8,
-    ca: u8,
+    ca: i16,
     black_count: u8,
     red_count: u8,
-    na: u8,
+    na: i16,
     score: u8,
     valid_move: bool,
     // init: bool,
@@ -257,17 +257,19 @@ impl Game {
                 "3" => {
                     p = true;
                 }
-                _ => println!("Invalid input! Try again\n"),
+                _ => println!("Invalid input! Try again"),
             }
             input.clear();
         }
     }
 
-    pub fn display_cards(&self) {
-        println!("====================================");
+    pub fn display_cards(&mut self) {
+        println!("==============================================");
+        if self.ad_stats {
+            self.display_ad_stats();
+        }
         if !self.f_enc {
-            println!("Black Cards Left: {}\n",
-                self.black_deck.deck_size() + 1);
+            println!("Black Cards Left: {}\n", self.black_deck.deck_size() + 1);
             println!("\t\tK");
             println!("Black: \n");
             println!(
@@ -387,7 +389,7 @@ impl Game {
             // init: true,
             game_over: false,
             f_enc: false,
-            black_count: (black_count + 32),
+            black_count: black_count,
             red_count,
             selected_black: Vec::new(),
             selected_red: Vec::new(),
@@ -435,17 +437,25 @@ impl Game {
     }
 
     pub fn display_ad_stats(&mut self) {
-        self.ca = self.red_deck.deck_size() - self.black_deck.deck_size() - 1;
+        self.ca = self.red_deck.deck_size() as i16 - self.black_deck.deck_size() as i16 - 1;
 
-        self.ca += self.red_in_play.iter().filter(|c| c.is_some()).count() as u8;
-        self.ca -= self.black_in_play.iter().filter(|c| c.is_some()).count() as u8;
+        self.ca += self.red_in_play.iter().filter(|c| c.is_some()).count() as i16;
+        self.ca -= self.black_in_play.iter().filter(|c| c.is_some()).count() as i16;
 
-        self.na = self.red_count - self.black_count;
+        self.na = self.red_count as i16 - self.black_count as i16;
 
         println!(
             "Card Advantage: {}\tNumber Advantage: {}\n",
-            self.ca, self.na
+            Self::posNeg(self.ca), Self::posNeg(self.na)
         );
+    }
+
+    pub fn posNeg(x: i16) -> String {
+        if x.is_positive() {
+            format!("+{}", x)
+        } else {
+            x.to_string()
+        }
     }
 
     // TODO adstats
@@ -453,9 +463,6 @@ impl Game {
         loop {
             self.valid_move = false;
             while !self.valid_move && !self.game_over {
-                if self.ad_stats {
-                    self.display_ad_stats()
-                }
                 self.display_cards();
                 self.turn();
                 self.draw();
