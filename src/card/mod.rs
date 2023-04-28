@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 // static mut counter: i32 = 0;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Card {
     value: u8,
     card_tag: u8,

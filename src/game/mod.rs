@@ -173,14 +173,8 @@ impl Game {
             println!("ACE WIPE\n");
             return CompareResult::AceWipe;
         }
-        if self.red_in_play[self.selected_red[0] as usize]
-            .unwrap()
-            .get_tag()
-            == 13
-            && self.black_in_play[self.selected_red[0] as usize]
-                .unwrap()
-                .get_tag()
-                == 13
+        if self.red_in_play.contains(&Some(Card::new_full(13)))
+            && self.black_in_play.contains(&Some(Card::new_full(13)))
         {
             return CompareResult::KingTie;
         }
@@ -263,18 +257,18 @@ impl Game {
                 "3" => {
                     p = true;
                 }
-                _ => println!("Invalid input! Try again"),
+                _ => println!("Invalid input! Try again\n"),
             }
             input.clear();
         }
     }
 
     pub fn display_cards(&self) {
+        println!("====================================");
         if !self.f_enc {
-            println!(
-                "\t\tK\t\t\tBlack Cards Left: {}\n",
-                self.black_deck.deck_size() + 1
-            );
+            println!("Black Cards Left: {}\n",
+                self.black_deck.deck_size() + 1);
+            println!("\t\tK");
             println!("Black: \n");
             println!(
                 "\t{}\t{}\t{}\n",
