@@ -3,6 +3,7 @@ use std::env;
 use std::fs;
 use std::io;
 use std::path::Path;
+use std::collections::HashSet;
 
 #[derive(PartialEq)]
 pub enum TieType {
@@ -227,7 +228,7 @@ impl Game {
             return CompareResult::Invalid;
         }
 
-        CompareResult::Invalid
+        CompareResult::Tie
     }
 
     pub fn welcome_screen(&mut self) {
@@ -477,31 +478,36 @@ impl Game {
 
     pub fn select(&mut self) {
         let mut input = String::new();
+        let mut processed_cases: HashSet<char> = HashSet::new();
         println!("\nSelect Red: ");
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
 
-        input.chars().for_each(|c| match c {
-            '1' => {
-                self.selected_red.push(0);
-                self.red_num_ip += 1;
-            }
-            '2' => {
-                self.selected_red.push(1);
-                self.red_num_ip += 1;
-            }
-            '3' => {
-                self.selected_red.push(2);
-                self.red_num_ip += 1;
-            }
-            'x' => {
-                self.black_deck.clear_deck();
-            }
-            _ => {}
-        });
+        input.chars().for_each(|c| if processed_cases.insert(c) {
+                match c {
+                    '1' => {
+                        self.selected_red.push(0);
+                        self.red_num_ip += 1;
+                    }
+                    '2' => {
+                        self.selected_red.push(1);
+                        self.red_num_ip += 1;
+                    }
+                    '3' => {
+                        self.selected_red.push(2);
+                        self.red_num_ip += 1;
+                    }
+                    'x' => {
+                        self.black_deck.clear_deck();
+                    }
+                    _ => {}
+                }
+            });
+        
 
         input.clear();
+        processed_cases.clear();
         // flag = true;
         if !self.f_enc {
             println!("Select Black: ");
@@ -509,23 +515,25 @@ impl Game {
                 .read_line(&mut input)
                 .expect("Failed to read line");
 
-            input.chars().for_each(|c| match c {
-                '1' => {
-                    self.selected_black.push(0);
-                    self.black_num_ip += 1;
+            input.chars().for_each(|c| if processed_cases.insert(c) {
+                match c {
+                    '1' => {
+                        self.selected_black.push(0);
+                        self.black_num_ip += 1;
+                    }
+                    '2' => {
+                        self.selected_black.push(1);
+                        self.black_num_ip += 1;
+                    }
+                    '3' => {
+                        self.selected_black.push(2);
+                        self.black_num_ip += 1;
+                    }
+                    'x' => {
+                        self.red_deck.clear_deck();
+                    }
+                    _ => {}
                 }
-                '2' => {
-                    self.selected_black.push(1);
-                    self.black_num_ip += 1;
-                }
-                '3' => {
-                    self.selected_black.push(2);
-                    self.black_num_ip += 1;
-                }
-                'x' => {
-                    self.red_deck.clear_deck();
-                }
-                _ => {}
             })
         } else {
             self.selected_black.push(1);
